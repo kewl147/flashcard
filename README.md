@@ -37,7 +37,7 @@ Make sure you have Python installed on your system.
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/your_username/flashcard_app.git
+   git clone https://github.com/kewl147/flashcard_app.git
    ```
 
 2. Install the required Python packages:
@@ -80,6 +80,4 @@ flashcard_app/
 
 Feel free to fork the repository and submit pull requests for improvements, bug fixes, or new features. Please make sure to include tests if you add new features.
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
