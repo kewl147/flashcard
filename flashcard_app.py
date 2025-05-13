@@ -1,113 +1,205 @@
 import tkinter as tk
-from tkinter import messagebox
+import json
+import os
 import random
-from data import flashcards
+from tkinter import messagebox
+from tkinter import PhotoImage
+from data import flashcards as original_flashcards
 
-random.shuffle(flashcards)
 
 class FlashcardApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Flashcard App")
 
-        self.index = 0
+        # Initializing cards
+        self.all_flashcards = original_flashcards
+        self.learned_cards = self.load_learned_cards()
+        self.flashcards = [card for card in self.all_flashcards if card["id"] not in self.learned_cards]
+        random.shuffle(self.flashcards)
+        self.current_index = 0
         self.showing_answer = False
 
+        # Card display
         self.card_text = tk.StringVar()
-        self.card_text.set(flashcards[self.index]['question'])
-
-        self.card_label = tk.Label(root, textvariable=self.card_text, font=("Arial", 20), width=40, height=5, relief="ridge", wraplength=400)
+        self.card_label = tk.Label(root, textvariable=self.card_text, font=("Arial", 20), wraplength=400, width=40, height=5)
         self.card_label.pack(pady=20)
+
+        # Bind the click event to flip the card
         self.card_label.bind("<Button-1>", self.flip_card)
 
-        self.counter_text = tk.StringVar()
-        self.counter_label = tk.Label(root, textvariable=self.counter_text, font=("Arial", 12))
-        self.counter_label.pack()
-        self.update_question_number()
+        # Create a frame to hold the left and right arrows next to the card display
+        arrow_frame = tk.Frame(root)
+        arrow_frame.pack(pady=10)
 
-        btn_frame = tk.Frame(root)
-        btn_frame.pack()
+        # Load arrow images from the 'images' folder
+        self.prev_arrow = PhotoImage(file="images/left_arrow.png").subsample(3, 3)  # Resize by reducing the size
+        self.next_arrow = PhotoImage(file="images/right_arrow.png").subsample(3, 3)  # Resize by reducing the size
 
-        self.prev_btn = tk.Button(btn_frame, text="Previous", command=self.prev_card)
-        self.prev_btn.grid(row=0, column=0, padx=10)
+        # Left arrow button
+        self.prev_button = tk.Button(arrow_frame, image=self.prev_arrow, command=self.prev_card, borderwidth=0, relief="solid")
+        self.prev_button.pack(side=tk.LEFT, padx=20)
 
-        self.next_btn = tk.Button(btn_frame, text="Next", command=self.next_card)
-        self.next_btn.grid(row=0, column=1, padx=10)
+        # Right arrow button
+        self.next_button = tk.Button(arrow_frame, image=self.next_arrow, command=self.next_card, borderwidth=0, relief="solid")
+        self.next_button.pack(side=tk.RIGHT, padx=20)
 
-        self.shuffle_btn = tk.Button(btn_frame, text="Randomize", command=self.shuffle_cards)
-        self.shuffle_btn.grid(row=0, column=2, padx=10)
+        # Flip card button
+        self.flip_button = tk.Button(root, text="Flip Card", command=self.flip_card)
+        self.flip_button.pack(pady=10)
 
-        # Entry fields for adding/editing flashcards
-        self.entry_frame = tk.Frame(root)
-        self.entry_frame.pack(pady=10)
+        # Other control buttons
+        button_frame = tk.Frame(root)
+        button_frame.pack(pady=10)
 
-        tk.Label(self.entry_frame, text="Question:").grid(row=0, column=0)
-        self.q_entry = tk.Entry(self.entry_frame, width=40)
-        self.q_entry.grid(row=0, column=1)
+        self.skip_button = tk.Button(button_frame, text="Mark as Learned", command=self.mark_card_as_learned)
+        self.skip_button.pack(side=tk.LEFT, padx=5)
 
-        tk.Label(self.entry_frame, text="Answer:").grid(row=1, column=0)
-        self.a_entry = tk.Entry(self.entry_frame, width=40)
-        self.a_entry.grid(row=1, column=1)
+        self.reset_button = tk.Button(button_frame, text="Reset Progress", command=self.reset_learned_cards)
+        self.reset_button.pack(side=tk.LEFT, padx=5)
 
-        tk.Button(self.entry_frame, text="Add Card", command=self.add_card).grid(row=2, columnspan=2, pady=5)
-        tk.Button(self.entry_frame, text="Edit Card", command=self.edit_card).grid(row=3, columnspan=2, pady=5)
+        self.view_all_button = tk.Button(button_frame, text="View All Cards", command=self.view_all_cards)
+        self.view_all_button.pack(side=tk.LEFT, padx=5)
 
-    def flip_card(self, event):
+        self.add_edit_button = tk.Button(button_frame, text="Add/Edit Card", command=self.add_edit_card)
+        self.add_edit_button.pack(side=tk.LEFT, padx=5)
+
+        self.display_flashcard()
+
+    def display_flashcard(self):
+        if not self.flashcards:
+            self.card_text.set("No cards to show. Reset to review all.")
+            return
+
+        self.showing_answer = False
+        card = self.flashcards[self.current_index]
+        self.card_text.set(f"Q: {card['question']}")
+
+    def flip_card(self, event=None):  # Allow click event or button press
+        if not self.flashcards:
+            return
+
+        card = self.flashcards[self.current_index]
         if self.showing_answer:
-            self.card_text.set(flashcards[self.index]['question'])
+            self.card_text.set(f"Q: {card['question']}")
         else:
-            self.card_text.set(flashcards[self.index]['answer'])
+            self.card_text.set(f"A: {card['answer']}")
         self.showing_answer = not self.showing_answer
 
-    def next_card(self):
-        if self.index < len(flashcards) - 1:
-            self.index += 1
-            self.card_text.set(flashcards[self.index]['question'])
-            self.showing_answer = False
-            self.update_question_number()
-
     def prev_card(self):
-        if self.index > 0:
-            self.index -= 1
-            self.card_text.set(flashcards[self.index]['question'])
-            self.showing_answer = False
-            self.update_question_number()
+        if not self.flashcards:
+            return
 
-    def add_card(self):
-        question = self.q_entry.get()
-        answer = self.a_entry.get()
-        if question and answer:
-            flashcards.append({"question": question, "answer": answer})
-            self.index = len(flashcards) - 1
-            self.card_text.set(question)
-            self.showing_answer = False
-            self.update_question_number()
-            self.q_entry.delete(0, tk.END)
-            self.a_entry.delete(0, tk.END)
+        self.current_index = (self.current_index - 1) % len(self.flashcards)
+        self.display_flashcard()
+
+    def next_card(self):
+        if not self.flashcards:
+            return
+
+        self.current_index = (self.current_index + 1) % len(self.flashcards)
+        self.display_flashcard()
+
+    def mark_card_as_learned(self):
+        if not self.flashcards:
+            return
+
+        card_id = self.flashcards[self.current_index]["id"]
+        self.learned_cards.add(card_id)
+        self.save_learned_cards()
+        self.flashcards.pop(self.current_index)
+
+        if self.flashcards:
+            self.current_index %= len(self.flashcards)
+            self.display_flashcard()
         else:
-            messagebox.showwarning("Input Error", "Please fill in both question and answer.")
+            self.card_text.set("All cards learned!")
 
-    def edit_card(self):
-        question = self.q_entry.get()
-        answer = self.a_entry.get()
-        if question and answer and flashcards:
-            flashcards[self.index] = {"question": question, "answer": answer}
-            self.card_text.set(question)
-            self.showing_answer = False
-            self.update_question_number()
-        else:
-            messagebox.showwarning("Input Error", "Please fill in both question and answer.")
+    def reset_learned_cards(self):
+        self.learned_cards.clear()
+        self.save_learned_cards()
+        self.flashcards = self.all_flashcards.copy()
+        random.shuffle(self.flashcards)
+        self.current_index = 0
+        self.display_flashcard()
 
-    def shuffle_cards(self):
-        random.shuffle(flashcards)
-        self.index = 0
-        self.card_text.set(flashcards[self.index]['question'])
-        self.showing_answer = False
-        self.update_question_number()
+    def load_learned_cards(self):
+        if os.path.exists("learned.json"):
+            with open("learned.json", "r") as f:
+                return set(json.load(f))
+        return set()
 
-    def update_question_number(self):
-        self.counter_text.set(f"Card {self.index + 1} of {len(flashcards)}")
+    def save_learned_cards(self):
+        with open("learned.json", "w") as f:
+            json.dump(list(self.learned_cards), f)
 
+    def view_all_cards(self):
+        top = tk.Toplevel(self.root)
+        top.title("All Flashcards")
+
+        text_widget = tk.Text(top, wrap=tk.WORD, width=60, height=30)
+        text_widget.pack(padx=10, pady=10)
+
+        for card in self.all_flashcards:
+            status = "✓ Learned" if card["id"] in self.learned_cards else "⏳ Not Learned"
+            text_widget.insert(tk.END, f"Q: {card['question']}\n")
+            text_widget.insert(tk.END, f"A: {card['answer']}\n")
+            text_widget.insert(tk.END, f"Status: {status}\n")
+            text_widget.insert(tk.END, "-" * 50 + "\n")
+
+        text_widget.config(state=tk.DISABLED)
+
+    def add_edit_card(self):
+        editor = tk.Toplevel(self.root)
+        editor.title("Add or Edit Flashcard")
+
+        tk.Label(editor, text="ID (number):").pack()
+        id_entry = tk.Entry(editor)
+        id_entry.pack()
+
+        tk.Label(editor, text="Question:").pack()
+        question_entry = tk.Entry(editor, width=50)
+        question_entry.pack()
+
+        tk.Label(editor, text="Answer:").pack()
+        answer_entry = tk.Entry(editor, width=50)
+        answer_entry.pack()
+
+        def save_card():
+            try:
+                card_id = int(id_entry.get())
+            except ValueError:
+                messagebox.showerror("Error", "ID must be a number.")
+                return
+
+            question = question_entry.get().strip()
+            answer = answer_entry.get().strip()
+
+            if not question or not answer:
+                messagebox.showerror("Error", "Question and Answer cannot be empty.")
+                return
+
+            # Check if card exists
+            for card in self.all_flashcards:
+                if card["id"] == card_id:
+                    card["question"] = question
+                    card["answer"] = answer
+                    break
+            else:
+                self.all_flashcards.append({
+                    "id": card_id,
+                    "question": question,
+                    "answer": answer
+                })
+
+            # Refresh and reshuffle cards
+            self.reset_learned_cards()
+            editor.destroy()
+
+        save_button = tk.Button(editor, text="Save Card", command=save_card)
+        save_button.pack(pady=10)
+
+# Run the app
 if __name__ == "__main__":
     root = tk.Tk()
     app = FlashcardApp(root)
