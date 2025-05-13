@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb2ee40e-f3d8-48f8-b8d5-4505fec0beed" name="Changes" comment="Flashcard app v1">
-      <change afterPath="$PROJECT_DIR$/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcard_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcard_app.py" afterDir="false" />
-    </list>
+    <list default="true" id="cb2ee40e-f3d8-48f8-b8d5-4505fec0beed" name="Changes" comment="Flashcard app v1" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,7 +59,7 @@
       <option name="presentableId" value="Default" />
       <updated>1747096385227</updated>
       <workItem from="1747096386299" duration="338000" />
-      <workItem from="1747097896483" duration="336000" />
+      <workItem from="1747097896483" duration="385000" />
     </task>
     <task id="LOCAL-00001" summary="Flashcard app v1">
       <option name="closed" value="true" />
@@ -73,7 +69,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747096723698</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Flashcard app v1">
+      <option name="closed" value="true" />
+      <created>1747098269041</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1747098269041</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Flashcard app v1">
+      <option name="closed" value="true" />
+      <created>1747098276382</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747098276382</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -84,6 +96,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Flashcard app v1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Flashcard$flashcard_app.coverage" NAME="flashcard_app Coverage Results" MODIFIED="1747096632929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Flashcard$flashcard_app.coverage" NAME="flashcard_app Coverage Results" MODIFIED="1747098232339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
