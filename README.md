@@ -34,41 +34,47 @@ Make sure you have Python installed on your system.
 You can download Python from python.org.
 
 Install Tkinter (usually comes pre-installed with Python):
-
+```
 bash
 Copy
 Edit
-pip install tk
+pip install tk```
 Setup
 Clone or download this repository:
-
+```
 bash
 Copy
 Edit
 git clone https://github.com/kewl147/flashcard_app.git
+```
 Install the required Python packages:
-
+```
 bash
 Copy
 Edit
 pip install -r requirements.txt
+```
 Place your flashcard_app.py, data.py, learned.json, and images/ folder (containing left_arrow.png and right_arrow.png) in the same directory.
 
 Run the App:
 
 Open a command prompt and navigate to the project directory:
-
+```
 bash
 Copy
 Edit
 cd path_to_your_project/flashcard
-Then run the app:
 
+```
+Then run the app:
+```
 bash
 Copy
 Edit
 python flashcard_app.py
+```
 Directory Structure
+```
 bash
 Copy
 Edit
@@ -78,6 +84,7 @@ flashcard_app/
 ├── data.py                 # File that contains flashcard data
 ├── learned.json            # Tracks learned flashcards
 └── images/                 # Folder containing arrow images (left_arrow.png, right_arrow.png)
+```
 Usage
 Flip Card: Click on the question or answer text to flip the card.
 
