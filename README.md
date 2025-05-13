@@ -45,7 +45,7 @@ Clone or download this repository:
 bash
 Copy
 Edit
-git clone https://github.com/your_username/flashcard_app.git
+git clone https://github.com/kewl147/flashcard_app.git
 Install the required Python packages:
 
 bash
